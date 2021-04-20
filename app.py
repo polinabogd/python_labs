@@ -31,10 +31,6 @@ class InsuranceSchema(ma.Schema):
     risk_level = fields.Integer()
 
 
-#   class Meta:
-#      fields = ('name', 'duration_in_months', 'min_insurance_sum', 'risk_level')
-
-
 insurance_schema = InsuranceSchema()
 insurances_schema = InsuranceSchema(many=True)
 
