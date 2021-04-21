@@ -37,17 +37,14 @@ insurances_schema = InsuranceSchema(many=True)
 
 @app.route('/insurance', methods=["POST"])
 def add_insurance():
-    name = request.json['name']
-    duration_in_months = request.json['duration_in_months']
-    min_insurance_sum = request.json['min_insurance_sum']
-    risk_level = request.json['risk_level']
-
-    new_insurance = Insurance(name, duration_in_months, min_insurance_sum, risk_level)
-
+    deserialized_data = InsuranceSchema().load(request.json)
+    new_insurance = Insurance(**deserialized_data)
+    
     db.session.add(new_insurance)
     db.session.commit()
 
-    return jsonify(new_insurance)
+    return insurance_schema.jsonify(new_insurance)
+
 
 
 @app.route("/insurance", methods=["GET"])
@@ -66,18 +63,17 @@ def insurance_detail(id):
 @app.route("/insurance/<id>", methods=["PUT"])
 def insurance_update(id):
     insurance = Insurance.query.get(id)
-    name = request.json['name']
-    duration_in_months = request.json['duration_in_months']
-    min_insurance_sum = request.json['min_insurance_sum']
-    risk_level = request.json['risk_level']
-
-    insurance.name = name
-    insurance.duration_in_months = duration_in_months
-    insurance.min_insurance_sum = min_insurance_sum
-    insurance.risk_level = risk_level
+    if not insurance:
+        abort(404)
+    old_insurance = copy.deepcopy(insurance)
+    deserialized_data = InsuranceSchema().load(request.json)
+    insurance.name = deserialized_data['name']
+    insurance.duration_in_months = deserialized_data['duration_in_months']
+    insurance.min_insurance_sum = deserialized_data['min_insurance_sum']
+    insurance.risk_level = deserialized_data['risk_level']
 
     db.session.commit()
-    return insurance_schema.jsonify(insurance)
+    return insurance_schema.jsonify(old_insurance)
 
 
 @app.route("/insurance/<id>", methods=["DELETE"])
