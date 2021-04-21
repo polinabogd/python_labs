@@ -13,9 +13,9 @@ ma = Marshmallow(app)
 class Insurance(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), nullable=False)
-    duration_in_months = db.Column(db.Integer, unique=True)
-    min_insurance_sum = db.Column(db.Integer, unique=True)
-    risk_level = db.Column(db.Integer, unique=True)
+    duration_in_months = db.Column(db.Integer, nullable=False)
+    min_insurance_sum = db.Column(db.Integer, nullable=False)
+    risk_level = db.Column(db.Integer, nullable=False)
 
     def __init__(self, name: str, duration_in_months: int, min_insurance_sum: float, risk_level: int):
         self.name = name
